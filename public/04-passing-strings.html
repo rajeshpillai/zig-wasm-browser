@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zig Wasm - Strings</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        button {
+            padding: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>04: Passing Strings</h1>
+
+    <div class="box">
+        <h3>Zig -> JavaScript</h3>
+        <p>Message from Zig: <b id="zigMsg">?</b></p>
+        <button id="btnGet">Get String from Zig</button>
+    </div>
+
+    <div class="box">
+        <h3>JavaScript -> Zig</h3>
+        <p>Check the console to see Zig printing back what we send.</p>
+        <button id="btnSend">Send "Hello from JS" to Zig</button>
+    </div>
+
+    <script>
+        let exports;
+        let memory;
+
+        const importObject = {
+            env: {
+                console_log: (ptr, len) => {
+                    // Read 'len' bytes starting at 'ptr'
+                    const bytes = new Uint8Array(memory.buffer, ptr, len);
+                    const decoder = new TextDecoder();
+                    const string = decoder.decode(bytes);
+                    console.log(`[Zig Log]: ${string}`);
+                }
+            }
+        };
+
+        WebAssembly.instantiateStreaming(fetch('04-passing-strings.wasm'), importObject)
+            .then(obj => {
+                exports = obj.instance.exports;
+                memory = exports.memory;
+            });
+
+        document.getElementById('btnGet').onclick = () => {
+            // 1. Get pointer and length
+            const ptr = exports.get_greeting_ptr();
+            const len = exports.get_greeting_len();
+
+            // 2. Read bytes
+            const bytes = new Uint8Array(memory.buffer, ptr, len);
+
+            // 3. Decode
+            const decoder = new TextDecoder();
+            const str = decoder.decode(bytes);
+
+            document.getElementById('zigMsg').innerText = str;
+        };
+
+        document.getElementById('btnSend').onclick = () => {
+            const message = "Hello from JS!";
+
+            // 1. Encode string to bytes
+            const encoder = new TextEncoder();
+            const encoded = encoder.encode(message);
+
+            // 2. Initial approach: Copy to a known buffer in Zig
+            // (In a real app, you'd probably allocate memory via malloc/allocator)
+            const bufferPtr = exports.get_input_buffer_ptr();
+
+            // 3. Write bytes to Zig memory
+            const wasmBytes = new Uint8Array(memory.buffer);
+            wasmBytes.set(encoded, bufferPtr);
+
+            // 4. Tell Zig to print it
+            exports.print_input_buffer(encoded.length);
+        };
+    </script>
+</body>
+
+</html>
