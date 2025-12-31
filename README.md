@@ -49,6 +49,7 @@ Our goal is to build up from "Hello World" to a functional game or graphics appl
 | **08** | [Animation Loop](tutorials/08-animation-loop.md) | [zig](src/08-animation-loop.zig) / [html](public/08-animation-loop.html) | Bouncing ball with persistent state & game loop. |
 | **09** | [User Input](tutorials/09-handling-input.md) | [zig](src/09-handling-input.zig) / [html](public/09-handling-input.html) | Mouse and Keyboard interaction. |
 | **10** | [Pong (Structs)](tutorials/10-pong-structs.md) | [zig](src/10-pong-structs.zig) / [html](public/10-pong-structs.html) | Game Architecture with Structs & Methods. |
+| **11** | [Pong (Collision)](tutorials/11-pong-collision.md) | [zig](src/11-pong-collision.zig) / [html](public/11-pong-collision.html) | AABB Collision detection & Scoring logic. |
 
 ## License
 MIT

@@ -28,5 +28,6 @@ The goal of this project is to learn and teach zig wasm + browser + html5 canvas
 ## Phase 4: Interaction & Projects
 - [x] 09: Handling User Input (Mouse/Keyboard)
 - [x] 10: Project: Pong Part 1 (Structs)
-- [ ] 11: Project: Pong Part 2 (Collision & Physics)
+- [x] 11: Project: Pong Part 2 (Collision & Physics)
 - [ ] 12: Project: Image Processing (Filters)
+

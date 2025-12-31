@@ -61,4 +61,10 @@ zig build-exe src/10-pong-structs.zig -target wasm32-freestanding -O ReleaseSmal
 mv 10-pong-structs.wasm public/
 rm 10-pong-structs.wasm.o || true
 
+# Tutorial 11
+echo "Building Tutorial 11: Pong Collision..."
+zig build-exe src/11-pong-collision.zig -target wasm32-freestanding -O ReleaseSmall -fno-entry --export=get_video_buffer_ptr --export=init --export=set_input --export=get_score --export=render -rdynamic --name 11-pong-collision
+mv 11-pong-collision.wasm public/
+rm 11-pong-collision.wasm.o || true
+
 echo "Done!"

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zig Wasm - Pong (Collision)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            text-align: center;
+            background: #222;
+            color: #fff;
+        }
+
+        canvas {
+            border: 1px solid #555;
+            image-rendering: pixelated;
+            width: 400px;
+            height: 400px;
+            background: #000;
+        }
+
+        .instructions {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-top: 10px;
+        }
+
+        #score {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ff5555;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>11: Project Pong (Collision)</h1>
+    <p>Don't let the ball pass the paddle!</p>
+    <div id="score">Resets: 0</div>
+    <div class="instructions">Use <b>UP</b> and <b>DOWN</b> arrow keys.</div>
+
+    <canvas id="screen" width="200" height="200" tabindex="1"></canvas>
+
+    <script>
+        const canvas = document.getElementById('screen');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const width = 200;
+        const height = 200;
+
+        let inputState = 0;
+
+        canvas.focus();
+        canvas.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') inputState = 1;
+            else if (e.key === 'ArrowDown') inputState = 2;
+            if (e.key.startsWith('Arrow')) e.preventDefault();
+        });
+        canvas.addEventListener('keyup', (e) => {
+            if ((e.key === 'ArrowUp' && inputState === 1) ||
+                (e.key === 'ArrowDown' && inputState === 2)) {
+                inputState = 0;
+            }
+        });
+
+        WebAssembly.instantiateStreaming(fetch('11-pong-collision.wasm'), {})
+            .then(obj => {
+                const exports = obj.instance.exports;
+                const memory = exports.memory;
+                const bufferPtr = exports.get_video_buffer_ptr();
+
+                exports.init();
+
+                function step() {
+                    exports.set_input(inputState);
+                    exports.render(); // This also updates physics
+
+                    // Update Score Display
+                    const score = exports.get_score();
+                    scoreEl.textContent = "Resets: " + score;
+
+                    const clampedArray = new Uint8ClampedArray(
+                        memory.buffer,
+                        bufferPtr,
+                        width * height * 4
+                    );
+                    const imageData = new ImageData(clampedArray, width, height);
+                    ctx.putImageData(imageData, 0, 0);
+
+                    requestAnimationFrame(step);
+                }
+
+                requestAnimationFrame(step);
+            });
+    </script>
+</body>
+
+</html>
