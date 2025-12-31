@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zig Wasm - User Input</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            text-align: center;
+            background: #222;
+            color: #fff;
+        }
+
+        canvas {
+            border: 1px solid #555;
+            image-rendering: pixelated;
+            width: 400px;
+            height: 400px;
+            background: #000;
+            cursor: crosshair;
+        }
+
+        .instructions {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>09: Handling User Input</h1>
+    <p>Move your mouse around!</p>
+    <div class="instructions">
+        Press <b>SPACE</b> for Blue.<br>
+        Press <b>ENTER</b> for Green.<br>
+        Press any other key for Red.
+    </div>
+
+    <canvas id="screen" width="200" height="200" tabindex="1"></canvas>
+
+    <script>
+        const canvas = document.getElementById('screen');
+        const ctx = canvas.getContext('2d');
+        const width = 200;
+        const height = 200;
+
+        // Focus canvas so it catches key events
+        canvas.focus();
+
+        WebAssembly.instantiateStreaming(fetch('09-handling-input.wasm'), {})
+            .then(obj => {
+                const exports = obj.instance.exports;
+                const memory = exports.memory;
+                const bufferPtr = exports.get_video_buffer_ptr();
+
+                // --- Input Handlers ---
+
+                // Mouse Move
+                canvas.addEventListener('mousemove', (e) => {
+                    // Calculate mouse position relative to canvas
+                    const rect = canvas.getBoundingClientRect();
+                    const scaleX = width / rect.width;
+                    const scaleY = height / rect.height;
+
+                    const x = (e.clientX - rect.left) * scaleX;
+                    const y = (e.clientY - rect.top) * scaleY;
+
+                    exports.set_mouse(Math.floor(x), Math.floor(y));
+                });
+
+                // Key Down
+                canvas.addEventListener('keydown', (e) => {
+                    // Prevent scrolling for Space/Enter
+                    if (e.keyCode === 32 || e.keyCode === 13) e.preventDefault();
+
+                    exports.handle_key(e.keyCode);
+                });
+
+                // Game Loop
+                function step() {
+                    exports.render();
+
+                    const clampedArray = new Uint8ClampedArray(
+                        memory.buffer,
+                        bufferPtr,
+                        width * height * 4
+                    );
+                    const imageData = new ImageData(clampedArray, width, height);
+                    ctx.putImageData(imageData, 0, 0);
+
+                    requestAnimationFrame(step);
+                }
+
+                requestAnimationFrame(step);
+            });
+    </script>
+</body>
+
+</html>

@@ -47,6 +47,7 @@ Our goal is to build up from "Hello World" to a functional game or graphics appl
 | **06** | [Canvas Basics](tutorials/06-canvas-basics.md) | [zig](src/06-canvas-basics.zig) / [html](public/06-canvas-basics.html) | Pixel buffers and ImageData. |
 | **07** | [Drawing Shapes](tutorials/07-drawing-shapes.md) | [zig](src/07-drawing-shapes.zig) / [html](public/07-drawing-shapes.html) | Drawing lines, rectangles, and circles in software. |
 | **08** | [Animation Loop](tutorials/08-animation-loop.md) | [zig](src/08-animation-loop.zig) / [html](public/08-animation-loop.html) | Bouncing ball with persistent state & game loop. |
+| **09** | [User Input](tutorials/09-handling-input.md) | [zig](src/09-handling-input.zig) / [html](public/09-handling-input.html) | Mouse and Keyboard interaction. |
 
 ## License
 MIT

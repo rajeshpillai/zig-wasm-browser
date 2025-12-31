@@ -49,4 +49,10 @@ zig build-exe src/08-animation-loop.zig -target wasm32-freestanding -O ReleaseSm
 mv 08-animation-loop.wasm public/
 rm 08-animation-loop.wasm.o || true
 
+# Tutorial 09
+echo "Building Tutorial 09: User Input..."
+zig build-exe src/09-handling-input.zig -target wasm32-freestanding -O ReleaseSmall -fno-entry --export=get_video_buffer_ptr --export=render --export=set_mouse --export=handle_key -rdynamic --name 09-handling-input
+mv 09-handling-input.wasm public/
+rm 09-handling-input.wasm.o || true
+
 echo "Done!"
