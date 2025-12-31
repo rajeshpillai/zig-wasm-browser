@@ -43,4 +43,10 @@ zig build-exe src/07-drawing-shapes.zig -target wasm32-freestanding -O ReleaseSm
 mv 07-drawing-shapes.wasm public/
 rm 07-drawing-shapes.wasm.o || true
 
+# Tutorial 08
+echo "Building Tutorial 08: Animation Loop..."
+zig build-exe src/08-animation-loop.zig -target wasm32-freestanding -O ReleaseSmall -fno-entry --export=get_video_buffer_ptr --export=render -rdynamic --name 08-animation-loop
+mv 08-animation-loop.wasm public/
+rm 08-animation-loop.wasm.o || true
+
 echo "Done!"

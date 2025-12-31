@@ -46,6 +46,7 @@ Our goal is to build up from "Hello World" to a functional game or graphics appl
 | **05** | [Arrays & Slices](tutorials/05-arrays-slices.md) | [zig](src/05-arrays-slices.zig) / [html](public/05-arrays-slices.html) | Processing numeric arrays (Int32Array). |
 | **06** | [Canvas Basics](tutorials/06-canvas-basics.md) | [zig](src/06-canvas-basics.zig) / [html](public/06-canvas-basics.html) | Pixel buffers and ImageData. |
 | **07** | [Drawing Shapes](tutorials/07-drawing-shapes.md) | [zig](src/07-drawing-shapes.zig) / [html](public/07-drawing-shapes.html) | Drawing lines, rectangles, and circles in software. |
+| **08** | [Animation Loop](tutorials/08-animation-loop.md) | [zig](src/08-animation-loop.zig) / [html](public/08-animation-loop.html) | Bouncing ball with persistent state & game loop. |
 
 ## License
 MIT
