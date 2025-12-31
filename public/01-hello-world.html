@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zig Wasm Hello World</title>
+</head>
+<body>
+    <h1>Zig Wasm Hello World</h1>
+    <p>Check the console for the result of 2 + 3 from Zig.</p>
+    <div id="result"></div>
+    <script>
+        const resultDiv = document.getElementById('result');
+
+        WebAssembly.instantiateStreaming(fetch('hello.wasm'), {})
+            .then(obj => {
+                const add = obj.instance.exports.add;
+                const res = add(2, 3);
+                console.log('2 + 3 =', res);
+                resultDiv.innerText = `Result from Zig: 2 + 3 = ${res}`;
+            });
+    </script>
+</body>
+</html>
