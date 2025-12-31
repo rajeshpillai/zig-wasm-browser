@@ -45,6 +45,7 @@ Our goal is to build up from "Hello World" to a functional game or graphics appl
 | **04** | [Passing Strings](tutorials/04-passing-strings.md) | [zig](src/04-passing-strings.zig) / [html](public/04-passing-strings.html) | Sending/Receiving text via TextEncoder/Decoder. |
 | **05** | [Arrays & Slices](tutorials/05-arrays-slices.md) | [zig](src/05-arrays-slices.zig) / [html](public/05-arrays-slices.html) | Processing numeric arrays (Int32Array). |
 | **06** | [Canvas Basics](tutorials/06-canvas-basics.md) | [zig](src/06-canvas-basics.zig) / [html](public/06-canvas-basics.html) | Pixel buffers and ImageData. |
+| **07** | [Drawing Shapes](tutorials/07-drawing-shapes.md) | [zig](src/07-drawing-shapes.zig) / [html](public/07-drawing-shapes.html) | Drawing lines, rectangles, and circles in software. |
 
 ## License
 MIT

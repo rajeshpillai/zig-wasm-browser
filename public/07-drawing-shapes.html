@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zig Wasm - Shapes</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            text-align: center;
+            background: #222;
+            color: #fff;
+        }
+
+        canvas {
+            border: 1px solid #555;
+            image-rendering: pixelated;
+            width: 400px;
+            height: 400px;
+            background: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>07: Drawing Shapes</h1>
+    <p>Rectangles and Circles drawn pixel-by-pixel in Zig.</p>
+
+    <canvas id="screen" width="200" height="200"></canvas>
+
+    <script>
+        const canvas = document.getElementById('screen');
+        const ctx = canvas.getContext('2d');
+        const width = 200;
+        const height = 200;
+
+        WebAssembly.instantiateStreaming(fetch('07-drawing-shapes.wasm'), {})
+            .then(obj => {
+                const exports = obj.instance.exports;
+                const memory = exports.memory;
+
+                const bufferPtr = exports.get_video_buffer_ptr();
+
+                // Render the frame in Zig
+                exports.render();
+
+                // Blit to canvas
+                const clampedArray = new Uint8ClampedArray(
+                    memory.buffer,
+                    bufferPtr,
+                    width * height * 4
+                );
+                const imageData = new ImageData(clampedArray, width, height);
+                ctx.putImageData(imageData, 0, 0);
+            });
+    </script>
+</body>
+
+</html>

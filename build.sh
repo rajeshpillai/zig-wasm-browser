@@ -37,4 +37,10 @@ zig build-exe src/06-canvas-basics.zig -target wasm32-freestanding -O ReleaseSma
 mv 06-canvas-basics.wasm public/
 rm 06-canvas-basics.wasm.o || true
 
+# Tutorial 07
+echo "Building Tutorial 07: Drawing Shapes..."
+zig build-exe src/07-drawing-shapes.zig -target wasm32-freestanding -O ReleaseSmall -fno-entry --export=get_video_buffer_ptr --export=render -rdynamic --name 07-drawing-shapes
+mv 07-drawing-shapes.wasm public/
+rm 07-drawing-shapes.wasm.o || true
+
 echo "Done!"
