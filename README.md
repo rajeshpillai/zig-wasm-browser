@@ -51,6 +51,7 @@ Our goal is to build up from "Hello World" to a functional game or graphics appl
 | **10** | [Pong (Structs)](tutorials/10-pong-structs.md) | [zig](src/10-pong-structs.zig) / [html](public/10-pong-structs.html) | Game Architecture with Structs & Methods. |
 | **11** | [Pong (Collision)](tutorials/11-pong-collision.md) | [zig](src/11-pong-collision.zig) / [html](public/11-pong-collision.html) | AABB Collision detection & Scoring logic. |
 | **12** | [Image Filters](tutorials/12-image-filters.md) | [zig](src/12-image-filters.zig) / [html](public/12-image-filters.html) | Uploading images & applying convolutions/effects. |
+| **13** | [Mandelbrot](tutorials/13-mandelbrot.md) | [zig](src/13-mandelbrot.zig) / [html](public/13-mandelbrot.html) | Optimization demo: Real-time fractal rendering. |
 
 ## License
 MIT

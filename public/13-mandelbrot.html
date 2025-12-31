@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zig Wasm - Mandelbrot</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            text-align: center;
+            background: #222;
+            color: #fff;
+        }
+
+        canvas {
+            border: 1px solid #555;
+            cursor: crosshair;
+        }
+
+        .controls {
+            margin-top: 10px;
+            color: #aaa;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>13: Optimization Demo (Mandelbrot)</h1>
+    <p>Calculating millions of complex numbers per frame.</p>
+    <canvas id="screen" width="400" height="400"></canvas>
+
+    <div class="controls">
+        <p>Left Click: Zoom In | Right Click: Zoom Out</p>
+        <div id="stats">Zoom: 100.0x | FPS: 0</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('screen');
+        const ctx = canvas.getContext('2d');
+        const stats = document.getElementById('stats');
+
+        const width = 400;
+        const height = 400;
+
+        // Initial View
+        let zoom = 100.0;
+        let panX = -0.5;
+        let panY = 0.0;
+
+        let wasmExports = null;
+        let lastTime = 0;
+
+        WebAssembly.instantiateStreaming(fetch('13-mandelbrot.wasm'), {})
+            .then(obj => {
+                wasmExports = obj.instance.exports;
+                requestAnimationFrame(step);
+            });
+
+        function step(timestamp) {
+            if (!wasmExports) return;
+
+            // Render Wasm
+            wasmExports.render(zoom, panX, panY);
+
+            // Blit to screen
+            const bufferPtr = wasmExports.get_video_buffer_ptr();
+            const memory = wasmExports.memory;
+
+            const clampedArray = new Uint8ClampedArray(
+                memory.buffer,
+                bufferPtr,
+                width * height * 4
+            );
+            const imageData = new ImageData(clampedArray, width, height);
+            ctx.putImageData(imageData, 0, 0);
+
+            // FPS Counter
+            const dt = timestamp - lastTime;
+            lastTime = timestamp;
+            const fps = Math.round(1000 / dt);
+            stats.textContent = `Zoom: ${zoom.toFixed(1)}x | FPS: ${fps}`;
+
+            requestAnimationFrame(step);
+        }
+
+        // Interactive Controls
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Map Mouse to World
+            // (x - width/2)/zoom + panX = worldX
+            const clickWorldX = (x - width / 2.0) / zoom + panX;
+            const clickWorldY = (y - height / 2.0) / zoom + panY;
+
+            // Re-center on click
+            panX = clickWorldX;
+            panY = clickWorldY;
+
+            if (e.button === 0) {
+                zoom *= 1.5; // Zoom In
+            } else if (e.button === 2) {
+                zoom /= 1.5; // Zoom Out
+            }
+        });
+
+        // Disable context menu on right click
+        canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+    </script>
+</body>
+
+</html>

@@ -73,4 +73,10 @@ zig build-exe src/12-image-filters.zig -target wasm32-freestanding -O ReleaseSma
 mv 12-image-filters.wasm public/
 rm 12-image-filters.wasm.o || true
 
+# Tutorial 13
+echo "Building Tutorial 13: Mandelbrot..."
+zig build-exe src/13-mandelbrot.zig -target wasm32-freestanding -O ReleaseSmall -fno-entry --export=get_video_buffer_ptr --export=render -rdynamic --name 13-mandelbrot
+mv 13-mandelbrot.wasm public/
+rm 13-mandelbrot.wasm.o || true
+
 echo "Done!"
