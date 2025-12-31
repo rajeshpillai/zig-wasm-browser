@@ -31,6 +31,8 @@ The goal of this project is to learn and teach zig wasm + browser + html5 canvas
 - [x] 11: Project: Pong Part 2 (Collision & Physics)
 - [x] 12: Project: Image Processing (Filters)
 - [x] 13: Project: Optimization Demo (Mandelbrot)
+- [x] 14: Project: UI Library (Immediate Mode GUI)
+
 
 
 

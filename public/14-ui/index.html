@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zig Wasm - UI Library</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            text-align: center;
+            background: #222;
+            color: #fff;
+        }
+
+        canvas {
+            border: 1px solid #555;
+            cursor: default;
+            user-select: none;
+            -webkit-user-select: none;
+            outline: none;
+        }
+
+        .hint {
+            color: #aaa;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>14: Immediate Mode GUI</h1>
+    <canvas id="screen" width="400" height="400"></canvas>
+    <p class="hint">A complete UI system (Buttons, Hover, Click, Fonts) running on Canvas.</p>
+
+    <script>
+        const canvas = document.getElementById('screen');
+        const ctx = canvas.getContext('2d');
+
+        const width = 400;
+        const height = 400;
+
+        // Input Handling
+        let mouseX = 0;
+        let mouseY = 0;
+        let isDown = false;
+
+        function updateMouse(e) {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = Math.floor(e.clientX - rect.left);
+            mouseY = Math.floor(e.clientY - rect.top);
+        }
+
+        canvas.addEventListener('mousemove', updateMouse);
+        canvas.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Prevent text selection/highlight
+            updateMouse(e);
+            isDown = true;
+        });
+        window.addEventListener('mouseup', () => {
+            isDown = false;
+        });
+
+        WebAssembly.instantiateStreaming(fetch('ui-library.wasm'), {})
+            .then(obj => {
+                const exports = obj.instance.exports;
+                const memory = exports.memory;
+
+                function step() {
+                    // Send Input
+                    exports.set_mouse(mouseX, mouseY, isDown ? 1 : 0);
+
+                    // Render UI
+                    exports.render_ui();
+
+                    // Blit
+                    const bufferPtr = exports.get_video_buffer_ptr();
+                    const clampedArray = new Uint8ClampedArray(
+                        memory.buffer,
+                        bufferPtr,
+                        width * height * 4
+                    );
+                    const imageData = new ImageData(clampedArray, width, height);
+                    ctx.putImageData(imageData, 0, 0);
+
+                    requestAnimationFrame(step);
+                }
+
+                requestAnimationFrame(step);
+            });
+    </script>
+</body>
+
+</html>

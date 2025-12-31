@@ -79,4 +79,10 @@ zig build-exe src/13-mandelbrot.zig -target wasm32-freestanding -O ReleaseSmall 
 mv 13-mandelbrot.wasm public/
 rm 13-mandelbrot.wasm.o || true
 
+# Tutorial 14
+echo "Building Tutorial 14: UI Library..."
+zig build-exe src/14-ui/main.zig -target wasm32-freestanding -O ReleaseSmall -fno-entry --export=get_video_buffer_ptr --export=set_mouse --export=render_ui -rdynamic --name ui-library
+mv ui-library.wasm public/14-ui/
+rm ui-library.wasm.o || true
+
 echo "Done!"
