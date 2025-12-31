@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zig Wasm - Memory</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        button {
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>03: Shared Memory</h1>
+    <p>We are reading and writing a single byte in WebAssembly memory.</p>
+
+    <p>Value from Memory: <b id="display">?</b></p>
+
+    <button id="btnRead">Read from JS</button>
+    <button id="btnWrite">Write 100 from JS</button>
+    <button id="btnZigInc">Increment in Zig</button>
+
+    <script>
+        const display = document.getElementById('display');
+        let memory;
+        let counterPtr;
+        let exports;
+
+        WebAssembly.instantiateStreaming(fetch('03-wasm-memory.wasm'), {})
+            .then(obj => {
+                exports = obj.instance.exports;
+                memory = exports.memory; // The chunk of raw bytes
+
+                // Get the "address" (index) of our counter variable
+                counterPtr = exports.get_counter_ptr();
+                console.log(`Counter is located at memory index: ${counterPtr}`);
+
+                updateDisplay();
+            });
+
+        function updateDisplay() {
+            // Create a view into the memory buffer
+            const bytes = new Uint8Array(memory.buffer);
+            // Read the value at the pointer's index
+            const value = bytes[counterPtr];
+            display.innerText = value;
+            console.log(`[JS Read] Index ${counterPtr} has value ${value}`);
+        }
+
+        document.getElementById('btnRead').onclick = () => {
+            updateDisplay();
+        };
+
+        document.getElementById('btnWrite').onclick = () => {
+            const bytes = new Uint8Array(memory.buffer);
+            bytes[counterPtr] = 100; // Write directly to memory
+            console.log(`[JS Write] Wrote 100 to index ${counterPtr}`);
+            updateDisplay();
+        };
+
+        document.getElementById('btnZigInc').onclick = () => {
+            exports.increment(); // Ask Zig to update it
+            console.log(`[Zig Ops] Called increment()`);
+            updateDisplay();
+        };
+    </script>
+</body>
+
+</html>

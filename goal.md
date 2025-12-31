@@ -15,7 +15,7 @@ The goal of this project is to learn and teach zig wasm + browser + html5 canvas
 - [x] 02: Importing JS functions (Calling console.log)
 
 ## Phase 2: Memory & Data
-- [ ] 03: WebAssembly Memory Basics (Pointers, Memory Object)
+- [x] 03: WebAssembly Memory Basics (Pointers, Memory Object)
 - [ ] 04: Passing Strings (Zig -> JS and JS -> Zig)
 - [ ] 05: Reading/Writing Arrays (Slices)
 

@@ -13,4 +13,10 @@ zig build-exe src/02-js-imports.zig -target wasm32-freestanding -O ReleaseSmall 
 mv 02-js-imports.wasm public/
 rm 02-js-imports.wasm.o || true
 
+# Tutorial 03
+echo "Building Tutorial 03: Wasm Memory..."
+zig build-exe src/03-wasm-memory.zig -target wasm32-freestanding -O ReleaseSmall -fno-entry --export=get_counter_ptr --export=increment -rdynamic --name 03-wasm-memory
+mv 03-wasm-memory.wasm public/
+rm 03-wasm-memory.wasm.o || true
+
 echo "Done!"
