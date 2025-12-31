@@ -20,7 +20,7 @@ The goal of this project is to learn and teach zig wasm + browser + html5 canvas
 - [x] 05: Reading/Writing Arrays (Slices)
 
 ## Phase 3: HTML5 Canvas & Graphics
-- [ ] 06: Canvas Setup & Context
+- [x] 06: Canvas Setup & Context
 - [ ] 07: Direct Pixel Manipulation (Framebuffer)
 - [ ] 08: The Animation Loop (RequestAnimationFrame)
 

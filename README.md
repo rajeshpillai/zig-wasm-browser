@@ -44,6 +44,7 @@ Our goal is to build up from "Hello World" to a functional game or graphics appl
 | **03** | [Memory Basics](tutorials/03-wasm-memory.md) | [zig](src/03-wasm-memory.zig) / [html](public/03-wasm-memory.html) | Understanding linear memory and pointers. |
 | **04** | [Passing Strings](tutorials/04-passing-strings.md) | [zig](src/04-passing-strings.zig) / [html](public/04-passing-strings.html) | Sending/Receiving text via TextEncoder/Decoder. |
 | **05** | [Arrays & Slices](tutorials/05-arrays-slices.md) | [zig](src/05-arrays-slices.zig) / [html](public/05-arrays-slices.html) | Processing numeric arrays (Int32Array). |
+| **06** | [Canvas Basics](tutorials/06-canvas-basics.md) | [zig](src/06-canvas-basics.zig) / [html](public/06-canvas-basics.html) | Pixel buffers and ImageData. |
 
 ## License
 MIT

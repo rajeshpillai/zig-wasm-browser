@@ -31,4 +31,10 @@ zig build-exe src/05-arrays-slices.zig -target wasm32-freestanding -O ReleaseSma
 mv 05-arrays-slices.wasm public/
 rm 05-arrays-slices.wasm.o || true
 
+# Tutorial 06
+echo "Building Tutorial 06: Canvas Basics..."
+zig build-exe src/06-canvas-basics.zig -target wasm32-freestanding -O ReleaseSmall -fno-entry --export=get_video_buffer_ptr --export=render -rdynamic --name 06-canvas-basics
+mv 06-canvas-basics.wasm public/
+rm 06-canvas-basics.wasm.o || true
+
 echo "Done!"

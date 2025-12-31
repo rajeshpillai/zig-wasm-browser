@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zig Wasm - Canvas Buffer</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+            image-rendering: pixelated;
+            /* To see sharp pixels */
+            width: 400px;
+            height: 400px;
+            /* Scaled up 2x for visibility */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>06: Canvas Setup & Pixel Buffer</h1>
+    <p>A 200x200 buffer rendered from Zig memory.</p>
+    <p>Look closely for the Red, Green, and Blue pixels at the top-left!</p>
+
+    <canvas id="screen" width="200" height="200"></canvas>
+
+    <script>
+        const canvas = document.getElementById('screen');
+        const ctx = canvas.getContext('2d');
+        const width = 200;
+        const height = 200;
+
+        WebAssembly.instantiateStreaming(fetch('06-canvas-basics.wasm'), {})
+            .then(obj => {
+                const exports = obj.instance.exports;
+                const memory = exports.memory;
+
+                // 1. Get pointer to the video buffer
+                const bufferPtr = exports.get_video_buffer_ptr();
+
+                // 2. Call Zig to draw pixels into memory
+                exports.render();
+
+                // 3. Create an ImageData view on top of Wasm memory
+                // 'Uint8ClampedArray' is required for ImageData.
+                // It clamps values 0-255.
+                // We take a slice of the WASM memory starting at bufferPtr.
+                // Length in bytes = width * height * 4 (RGBA)
+                const clampedArray = new Uint8ClampedArray(
+                    memory.buffer,
+                    bufferPtr,
+                    width * height * 4
+                );
+
+                // 4. Create ImageData object
+                const imageData = new ImageData(clampedArray, width, height);
+
+                // 5. Blit to canvas
+                ctx.putImageData(imageData, 0, 0);
+            });
+    </script>
+</body>
+
+</html>
