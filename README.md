@@ -50,6 +50,7 @@ Our goal is to build up from "Hello World" to a functional game or graphics appl
 | **09** | [User Input](tutorials/09-handling-input.md) | [zig](src/09-handling-input.zig) / [html](public/09-handling-input.html) | Mouse and Keyboard interaction. |
 | **10** | [Pong (Structs)](tutorials/10-pong-structs.md) | [zig](src/10-pong-structs.zig) / [html](public/10-pong-structs.html) | Game Architecture with Structs & Methods. |
 | **11** | [Pong (Collision)](tutorials/11-pong-collision.md) | [zig](src/11-pong-collision.zig) / [html](public/11-pong-collision.html) | AABB Collision detection & Scoring logic. |
+| **12** | [Image Filters](tutorials/12-image-filters.md) | [zig](src/12-image-filters.zig) / [html](public/12-image-filters.html) | Uploading images & applying convolutions/effects. |
 
 ## License
 MIT

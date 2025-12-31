@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zig Wasm - Image Filters</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            text-align: center;
+            background: #222;
+            color: #fff;
+        }
+
+        canvas {
+            border: 1px solid #555;
+            width: 400px;
+            height: 400px;
+            background: #000;
+            margin-top: 10px;
+        }
+
+        .controls {
+            margin: 20px;
+            padding: 10px;
+            background: #333;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        select,
+        input,
+        button {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 4px;
+            border: none;
+        }
+
+        label {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+
+        #hiddenCanvas {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>12: Image Processing Filters</h1>
+    <p>Upload an image and apply filters in WebAssembly.</p>
+
+    <div class="controls">
+        <label>1. Upload Image (400x400 recommended)</label>
+        <input type="file" id="upload" accept="image/*">
+
+        <label>2. Select Filter</label>
+        <select id="filterSelect">
+            <option value="0">Original</option>
+            <option value="1">Grayscale</option>
+            <option value="2">Brightness</option>
+            <option value="3">Invert</option>
+            <option value="4">Threshold</option>
+            <option value="5">Sepia</option>
+            <option value="6">Blur</option>
+            <option value="7">Sharpen</option>
+            <option value="8">Edge Detection</option>
+            <option value="9">Noise</option>
+            <option value="10">Pixelate</option>
+        </select>
+
+        <label>3. Intensity / Value</label>
+        <input type="range" id="intensity" min="-100" max="100" value="0">
+        <span id="valDisplay">0</span>
+    </div>
+
+    <br>
+    <canvas id="screen" width="400" height="400"></canvas>
+
+    <!-- Hidden canvas to resize uploaded images to 400x400 -->
+    <canvas id="hiddenCanvas" width="400" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('screen');
+        const ctx = canvas.getContext('2d');
+        const hiddenCanvas = document.getElementById('hiddenCanvas');
+        const hiddenCtx = hiddenCanvas.getContext('2d');
+        const width = 400;
+        const height = 400;
+
+        const filterSelect = document.getElementById('filterSelect');
+        const intensity = document.getElementById('intensity');
+        const valDisplay = document.getElementById('valDisplay');
+        const upload = document.getElementById('upload');
+
+        let wasmExports = null;
+
+        WebAssembly.instantiateStreaming(fetch('12-image-filters.wasm'), {})
+            .then(obj => {
+                wasmExports = obj.instance.exports;
+
+                // Draw default gradient initially
+                drawDefaultImage();
+            });
+
+        function drawDefaultImage() {
+            // Create a cool gradient pattern
+            const grad = hiddenCtx.createLinearGradient(0, 0, 400, 400);
+            grad.addColorStop(0, "red");
+            grad.addColorStop(0.5, "blue");
+            grad.addColorStop(1, "lime");
+            hiddenCtx.fillStyle = grad;
+            hiddenCtx.fillRect(0, 0, 400, 400);
+
+            hiddenCtx.fillStyle = "white";
+            hiddenCtx.font = "40px sans-serif";
+            hiddenCtx.fillText("Zig Wasm", 120, 200);
+
+            sendImageToWasm();
+            apply();
+        }
+
+        // Logic to send JS image data to Wasm "Source Buffer"
+        function sendImageToWasm() {
+            if (!wasmExports) return;
+            const imgData = hiddenCtx.getImageData(0, 0, width, height);
+            const sourcePtr = wasmExports.get_source_buffer_ptr();
+            const memoryBuffer = new Uint8Array(wasmExports.memory.buffer);
+
+            // Copy JS -> Wasm
+            memoryBuffer.set(imgData.data, sourcePtr);
+        }
+
+        function apply() {
+            if (!wasmExports) return;
+
+            const filterId = parseInt(filterSelect.value);
+            const val = parseInt(intensity.value);
+            valDisplay.textContent = val;
+
+            // Run Filter
+            wasmExports.apply_filter(filterId, val);
+
+            // Read Output back
+            const outputPtr = wasmExports.get_output_buffer_ptr();
+            const clampedArray = new Uint8ClampedArray(
+                wasmExports.memory.buffer,
+                outputPtr,
+                width * height * 4
+            );
+
+            const resultData = new ImageData(clampedArray, width, height);
+            ctx.putImageData(resultData, 0, 0);
+        }
+
+        // Event Listeners
+        filterSelect.addEventListener('change', () => {
+            // Reset slider defaults for certain filters
+            const id = parseInt(filterSelect.value);
+            if (id === 2) intensity.value = 20; // Brightness
+            else if (id === 4) intensity.value = 128; // Threshold
+            else if (id === 9) intensity.value = 30; // Noise
+            else if (id === 10) intensity.value = 10; // Pixelate
+            else intensity.value = 0;
+
+            apply();
+        });
+
+        intensity.addEventListener('input', apply);
+
+        upload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                const img = new Image();
+                img.onload = () => {
+                    // Draw to hidden canvas (resize to 400x400)
+                    hiddenCtx.drawImage(img, 0, 0, 400, 400);
+                    sendImageToWasm();
+                    apply();
+                };
+                img.src = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+    </script>
+</body>
+
+</html>

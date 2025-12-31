@@ -67,4 +67,10 @@ zig build-exe src/11-pong-collision.zig -target wasm32-freestanding -O ReleaseSm
 mv 11-pong-collision.wasm public/
 rm 11-pong-collision.wasm.o || true
 
+# Tutorial 12
+echo "Building Tutorial 12: Image Filters..."
+zig build-exe src/12-image-filters.zig -target wasm32-freestanding -O ReleaseSmall -fno-entry --export=get_source_buffer_ptr --export=get_output_buffer_ptr --export=apply_filter -rdynamic --name 12-image-filters
+mv 12-image-filters.wasm public/
+rm 12-image-filters.wasm.o || true
+
 echo "Done!"
