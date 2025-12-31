@@ -25,4 +25,10 @@ zig build-exe src/04-passing-strings.zig -target wasm32-freestanding -O ReleaseS
 mv 04-passing-strings.wasm public/
 rm 04-passing-strings.wasm.o || true
 
+# Tutorial 05
+echo "Building Tutorial 05: Arrays..."
+zig build-exe src/05-arrays-slices.zig -target wasm32-freestanding -O ReleaseSmall -fno-entry --export=get_input_buffer_ptr --export=process_array -rdynamic --name 05-arrays-slices
+mv 05-arrays-slices.wasm public/
+rm 05-arrays-slices.wasm.o || true
+
 echo "Done!"

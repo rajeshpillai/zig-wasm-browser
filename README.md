@@ -43,6 +43,7 @@ Our goal is to build up from "Hello World" to a functional game or graphics appl
 | **02** | [Importing JS](tutorials/02-js-imports.md) | [zig](src/02-js-imports.zig) / [html](public/02-js-imports.html) | Calling JavaScript functions from Zig. |
 | **03** | [Memory Basics](tutorials/03-wasm-memory.md) | [zig](src/03-wasm-memory.zig) / [html](public/03-wasm-memory.html) | Understanding linear memory and pointers. |
 | **04** | [Passing Strings](tutorials/04-passing-strings.md) | [zig](src/04-passing-strings.zig) / [html](public/04-passing-strings.html) | Sending/Receiving text via TextEncoder/Decoder. |
+| **05** | [Arrays & Slices](tutorials/05-arrays-slices.md) | [zig](src/05-arrays-slices.zig) / [html](public/05-arrays-slices.html) | Processing numeric arrays (Int32Array). |
 
 ## License
 MIT
