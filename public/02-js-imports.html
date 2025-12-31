@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zig Wasm - Imports</title>
+</head>
+
+<body>
+    <h1>Zig Wasm - JS Imports</h1>
+    <p>Check the console! Zig is calling JavaScript's <code>console.log</code>.</p>
+    <div id="result"></div>
+    <script>
+        const importObject = {
+            env: {
+                print: (value) => {
+                    console.log(`[Zig says]: Value is ${value}`);
+                }
+            }
+        };
+
+        WebAssembly.instantiateStreaming(fetch('02-js-imports.wasm'), importObject)
+            .then(obj => {
+                const add = obj.instance.exports.add;
+                const result = add(10, 20);
+                document.getElementById('result').innerText = `Result from Zig: ${result}`;
+            });
+    </script>
+</body>
+
+</html>

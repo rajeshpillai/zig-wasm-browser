@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Zig Wasm Hello World</title>
 </head>
+
 <body>
     <h1>Zig Wasm Hello World</h1>
     <p>Check the console for the result of 2 + 3 from Zig.</p>
@@ -11,7 +13,7 @@
     <script>
         const resultDiv = document.getElementById('result');
 
-        WebAssembly.instantiateStreaming(fetch('hello.wasm'), {})
+        WebAssembly.instantiateStreaming(fetch('01-hello-world.wasm'), {})
             .then(obj => {
                 const add = obj.instance.exports.add;
                 const res = add(2, 3);
@@ -20,4 +22,5 @@
             });
     </script>
 </body>
+
 </html>
