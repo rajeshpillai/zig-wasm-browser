@@ -55,4 +55,10 @@ zig build-exe src/09-handling-input.zig -target wasm32-freestanding -O ReleaseSm
 mv 09-handling-input.wasm public/
 rm 09-handling-input.wasm.o || true
 
+# Tutorial 10
+echo "Building Tutorial 10: Pong Structs..."
+zig build-exe src/10-pong-structs.zig -target wasm32-freestanding -O ReleaseSmall -fno-entry --export=get_video_buffer_ptr --export=init --export=set_input --export=render -rdynamic --name 10-pong-structs
+mv 10-pong-structs.wasm public/
+rm 10-pong-structs.wasm.o || true
+
 echo "Done!"
