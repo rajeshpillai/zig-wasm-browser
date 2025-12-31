@@ -101,10 +101,10 @@ fn button(id: u32, text: []const u8, x: i32, y: i32, w: i32, h: i32) bool {
         ui.active_item = 0;
     }
     
-    // Clear active if mouse released anywhere
-    if (!ui.mouse_down) {
-        ui.active_item = 0;
-    }
+    // Clear active if mouse released anywhere -> MOVED TO FRAME END
+    // if (!ui.mouse_down) {
+    //    ui.active_item = 0;
+    // }
 
     // 3. Render
     var bg_color: u32 = 0xFF444444; // Idle: Gray
@@ -131,7 +131,78 @@ fn button(id: u32, text: []const u8, x: i32, y: i32, w: i32, h: i32) bool {
     return result;
 }
 
+// The Checkbox Widget
+// The Checkbox Widget
+fn checkbox(id: u32, text: []const u8, checked: *bool, x: i32, y: i32) bool {
+    const box_size = 12;
+    // 1. Hit Test (Box + Text area approximation)
+    const w = box_size + 10 + @as(i32, @intCast(text.len * 8));
+    const h = box_size;
+    
+    // Check if mouse is strictly inside
+    if (ui.mouse_x >= x and ui.mouse_x < x + w and
+        ui.mouse_y >= y and ui.mouse_y < y + h) 
+    {
+        ui.hot_item = id;
+        if (ui.active_item == 0 and ui.mouse_down) {
+            ui.active_item = id;
+        }
+    }
+
+    // 2. Interaction
+    var result = false;
+    // Toggle ONLY on specific condition: Hot, Active, and Mouse JUST Release (was down, now up?)
+    // Actually our IMGUI logic is: 
+    // - On mouse down: set active_item.
+    // - On mouse up: if hot_item == active_item, then CLICKED.
+    // But our loop clears active_item if !mouse_down at start of frame? No.
+    // Let's rely on the standard "Click" logic:
+    // If we are hot, we are potentially clickable.
+    // If we were active (pressed down) and now mouse is up (and still hot), trigger.
+    
+    // Note: The previous logic relied on `if (!ui.mouse_down) ui.active_item = 0;` happening AFTER.
+    // But `main.zig` logic says `if (ui.mouse_down == false ...)` which means we handle "Mouse UP" event here.
+    
+    if (ui.hot_item == id and ui.active_item == id and ui.mouse_down == false) {
+        checked.* = !checked.*; // Toggle
+        result = true;
+    }
+
+    // 3. Render
+    var box_color: u32 = 0xFF444444;
+    // Visual feedback for interaction
+    if (ui.hot_item == id) box_color = 0xFF666666;
+    if (ui.active_item == id) box_color = 0xFF888888;
+    
+    // Draw Box Background
+    fill_rect(x, y, box_size, box_size, box_color);
+    
+    // Draw Border (makes it clearer)
+    // Top/Left
+    fill_rect(x, y, box_size, 1, 0xFFAAAAAA);
+    fill_rect(x, y, 1, box_size, 0xFFAAAAAA);
+    // Bottom/Right
+    fill_rect(x, y + box_size - 1, box_size, 1, 0xFF222222);
+    fill_rect(x + box_size - 1, y, 1, box_size, 0xFF222222);
+
+    if (checked.*) {
+        // Draw X (green)
+        const check_color = 0xFF00FF00;
+        var i: i32 = 2;
+        while (i < box_size - 2) : (i += 1) {
+            put_pixel(x + i, y + i, check_color);
+            put_pixel(x + box_size - 1 - i, y + i, check_color);
+        }
+    }
+    
+    // Draw Label
+    draw_text(text, x + box_size + 8, y + 2, 0xFFFFFFFF);
+
+    return result;
+}
+
 var counter: i32 = 0;
+var show_quit: bool = true;
 
 export fn render_ui() void {
     frame_start();
@@ -151,7 +222,20 @@ export fn render_ui() void {
     const slice = std.fmt.bufPrint(&buf, "CLICKS: {d}", .{counter}) catch "ERR";
     draw_text(slice, 200, 60, 0xFF00FF00);
     
-    if (button(3, "QUIT", 300, 350, 80, 30)) {
-        draw_text("BYE!", 320, 320, 0xFF0000FF);
+    
+    // Checkbox Demo
+    _ = checkbox(4, "Show Quit Button", &show_quit, 50, 150);
+
+    if (show_quit) {
+        if (button(3, "QUIT", 300, 350, 80, 30)) {
+            draw_text("BYE!", 320, 320, 0xFF0000FF);
+        }
+    }
+
+    // Global Input Cleanup
+    // If mouse is up, we must eventually drop active_item 
+    // (if it wasn't consumed by a click action above)
+    if (!ui.mouse_down) {
+        ui.active_item = 0;
     }
 }

@@ -54,6 +54,8 @@ pub fn get_char_bitmap(c: u8) u64 {
         '8' => return 0x3C66663C66663C00,
         '9' => return 0x3C66663E06663C00,
         ' ' => return 0x0000000000000000,
+        // Map lowercase to uppercase for this minimal font
+        'a'...'z' => return get_char_bitmap(c - 32),
         else => return 0xFF8181818181FF00, // Box for unknown
     }
 }
