@@ -1,0 +1,47 @@
+# Zig Wasm Browser Tutorials
+
+Welcome! This repository contains a series of step-by-step tutorials to help you learn how to use **Zig** to create **WebAssembly (Wasm)** modules that interact with the browser (HTML5 Canvas, DOM, etc.).
+
+Our goal is to build up from "Hello World" to a functional game or graphics application, one tiny concept at a time.
+
+## Prerequisites
+- **Zig Compiler**: Install the latest version from [ziglang.org](https://ziglang.org/download/).
+- **Web Browser**: Any modern browser (Chrome, Firefox, Safari, Edge).
+- **Local Server**: Required to serve Wasm files (e.g., Python 3, Node `http-server`, or VS Code Live Server).
+
+## Quick Start
+
+1.  **Clone the repo**:
+    ```bash
+    git clone https://github.com/rajeshpillai/zig-wasm-browser.git
+    cd zig-wasm-browser
+    ```
+
+2.  **Build everything**:
+    ```bash
+    ./build.sh
+    ```
+    This compiles all Zig sources in `src/` to Wasm files in `public/`.
+
+3.  **Run**:
+    ```bash
+    cd public
+    # Using Python 3
+    python3 -m http.server
+    # OR using npx
+    npx serve .
+    ```
+
+4.  **Visit**: Open your browser to `http://localhost:8000` (or `http://localhost:3000` depending on your server).
+
+## Tutorials
+
+| Index | Title | Code | Description |
+| :--- | :--- | :--- | :--- |
+| **00** | [Introduction](tutorials/00-introduction.md) | N/A | Overview of Zig and WebAssembly. |
+| **01** | [Hello World](tutorials/01-hello-world.md) | [zig](src/01-hello-world.zig) / [html](public/01-hello-world.html) | Exporting a function from Zig to JS. |
+| **02** | [Importing JS](tutorials/02-js-imports.md) | [zig](src/02-js-imports.zig) / [html](public/02-js-imports.html) | Calling JavaScript functions from Zig. |
+| **03** | [Memory Basics](tutorials/03-wasm-memory.md) | [zig](src/03-wasm-memory.zig) / [html](public/03-wasm-memory.html) | Understanding linear memory and pointers. |
+
+## License
+MIT
